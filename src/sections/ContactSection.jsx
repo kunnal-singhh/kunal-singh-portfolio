@@ -79,7 +79,9 @@ export default function ContactSection({ personal, contact }) {
       // 3. Fallback error state with immediate one-click mailto
       setSubmittedData(data);
       setErrorMessage(
-        errorJson.error || 'Email service credentials not yet set in Netlify. Click below to email Kunal directly.'
+        errorJson.message ||
+        errorJson.error ||
+        'Email service credentials not yet set in Netlify. Click below to email Kunal directly.'
       );
       setFormStatus('error');
     } catch (err) {
