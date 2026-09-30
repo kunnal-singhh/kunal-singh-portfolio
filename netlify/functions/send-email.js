@@ -70,9 +70,9 @@ export async function handler(event) {
           'api-key': process.env.BREVO_API_KEY,
         },
         body: JSON.stringify({
-          sender: { name: 'Portfolio Contact Form', email: senderEmail },
+          sender: { name: `${name} (via Portfolio)`, email: senderEmail },
           to: [{ email: toEmail, name: 'Kunal Singh' }],
-          replyTo: { email, name },
+          replyTo: { email: email, name: name },
           subject: emailSubject,
           htmlContent,
           textContent: `From: ${name} (${email})\n\nMessage:\n${message}`,
@@ -111,7 +111,7 @@ export async function handler(event) {
       const transporter = nodemailer.createTransport(transportConfig);
 
       await transporter.sendMail({
-        from: `"Portfolio Contact Form" <${smtpUser}>`,
+        from: `"${name} (via Portfolio)" <${smtpUser}>`,
         to: toEmail,
         replyTo: `"${name}" <${email}>`,
         subject: emailSubject,
