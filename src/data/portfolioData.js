@@ -220,8 +220,8 @@ export const portfolioData = {
       fullDesc: "Architected a real-time mock interview platform featuring low-latency video calling, in-session chat, and collaborative code editing. Integrated the JDoodle API for multi-language sandboxed code execution (JavaScript, Python, Java). Implemented Clerk auth with custom Express middleware to auto-synchronize user profiles into MongoDB and Stream. Utilized Inngest serverless workflows with automated retry queues for robust event handling.",
       tech: ["React.js", "Node.js", "Express", "Stream SDK", "Monaco Editor", "Inngest", "MongoDB"],
       image: "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?q=80&w=1200&auto=format&fit=crop",
-      liveUrl: "https://example.com/demo",
-      githubUrl: "https://github.com",
+      liveUrl: "https://video-intervue-platform.netlify.app/",
+      githubUrl: "https://github.com/kunnal-singhh/Intervue",
       featured: true
     },
     {
@@ -232,8 +232,8 @@ export const portfolioData = {
       fullDesc: "Engineered a full-stack financial platform with JWT access tokens and HTTP-only cookie refresh token rotation. Implemented automated transaction categorization across 22+ categories and an AI financial assistant powered by Groq API with Gemini fallback. Configured budget alerts using node-cron with period-aware deduplication and an analytics dashboard with Recharts.",
       tech: ["MERN Stack", "Groq API", "Gemini API", "Recharts", "MongoDB", "Node-Cron"],
       image: "https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?q=80&w=1200&auto=format&fit=crop",
-      liveUrl: "https://example.com/demo",
-      githubUrl: "https://github.com",
+      liveUrl: "https://expnsetrkr.netlify.app/",
+      githubUrl: "https://github.com/kunnal-singhh/ExpenseTracker",
       featured: true
     },
     {
@@ -244,8 +244,8 @@ export const portfolioData = {
       fullDesc: "Built an authentication service featuring SHA-256 hashed sessions in MongoDB with instant revocation. Developed RESTful APIs supporting full-text regex search, soft-deletes, and trash bin restoration. Fortified endpoints with per-user and per-IP rate limiting (30 req/min). Containerized the application with Docker Compose and multi-stage Nginx builds.",
       tech: ["React.js", "Node.js", "Express", "MongoDB", "Docker", "Nginx", "Jest"],
       image: "https://images.unsplash.com/photo-1544383835-bda2bc66a55d?q=80&w=1200&auto=format&fit=crop",
-      liveUrl: "https://example.com/demo",
-      githubUrl: "https://github.com",
+      liveUrl: "https://note-vaultt.netlify.app/",
+      githubUrl: "https://github.com/kunnal-singhh/NoteVault",
       featured: true
     }
   ],

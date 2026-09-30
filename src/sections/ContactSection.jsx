@@ -22,50 +22,57 @@ export default function ContactSection({ personal, contact }) {
     setTimeout(() => setCopied(false), 2000);
   };
 
+  const encodeFormData = (data) => {
+    return Object.keys(data)
+      .map((key) => encodeURIComponent(key) + '=' + encodeURIComponent(data[key]))
+      .join('&');
+  };
+
   const onSubmit = async (data) => {
     setErrorMessage('');
     const formspreeId = import.meta.env.VITE_FORMSPREE_ID || contact?.formspreeId || '';
+    const hasFormspree = formspreeId && formspreeId !== 'xblrvkwo' && formspreeId !== 'YOUR_FORMSPREE_ID';
 
-    // Check if ID is missing or placeholder
-    if (!formspreeId || formspreeId === 'xblrvkwo' || formspreeId === 'YOUR_FORMSPREE_ID') {
-      setSubmittedData(data);
-      setErrorMessage(
-        'Your Formspree Form ID is not yet connected. Create a free form at formspree.io and add your 8-character ID in portfolioData.js or VITE_FORMSPREE_ID.'
-      );
-      setFormStatus('error');
-      return;
-    }
-    
     try {
-      const response = await fetch(`https://formspree.io/f/${formspreeId}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json'
-        },
-        body: JSON.stringify({
-          name: data.name,
-          email: data.email,
-          message: data.message,
-          _subject: `New Portfolio Message from ${data.name} via kunal.dev`
-        })
-      });
+      let response;
+      if (hasFormspree) {
+        response = await fetch(`https://formspree.io/f/${formspreeId}`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+          },
+          body: JSON.stringify({
+            name: data.name,
+            email: data.email,
+            message: data.message,
+            _subject: `New Portfolio Message from ${data.name} via kunal.dev`
+          })
+        });
+      } else {
+        // Native Netlify Forms fallback when deployed on Netlify
+        response = await fetch('/', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: encodeFormData({ 'form-name': 'contact', ...data })
+        });
+      }
 
-      if (response.ok) {
+      if (response && response.ok) {
         setSubmittedData(data);
         setFormStatus('success');
         reset();
       } else {
         const errorData = await response.json().catch(() => ({}));
         const msg = errorData?.errors?.map(e => e.message).join(', ') || 
-          'Form service temporarily unavailable. Please email directly.';
+          'Automated delivery is temporarily unavailable. Click below to email Kunal directly.';
         setSubmittedData(data);
         setErrorMessage(msg);
         setFormStatus('error');
       }
     } catch (err) {
       setSubmittedData(data);
-      setErrorMessage(err.message || 'Network error. Please try sending via direct email.');
+      setErrorMessage(err.message || 'Network error. Click below to send your message directly via email.');
       setFormStatus('error');
     }
   };
@@ -191,7 +198,16 @@ export default function ContactSection({ personal, contact }) {
               </button>
             </motion.div>
           ) : (
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+            <form
+              name="contact"
+              method="POST"
+              data-netlify="true"
+              data-netlify-honeypot="bot-field"
+              onSubmit={handleSubmit(onSubmit)}
+              className="space-y-6"
+            >
+              <input type="hidden" name="form-name" value="contact" />
+              <input type="hidden" name="bot-field" />
               {formStatus === 'error' && (
                 <div className="p-4 rounded-2xl bg-rose-500/10 border border-rose-500/20 text-rose-400 text-xs space-y-2">
                   <div className="flex items-center gap-2 font-semibold">
