@@ -30,13 +30,31 @@ export default function ContactSection({ personal, contact }) {
 
   const onSubmit = async (data) => {
     setErrorMessage('');
-    const formspreeId = import.meta.env.VITE_FORMSPREE_ID || contact?.formspreeId || '';
-    const hasFormspree = formspreeId && formspreeId !== 'xblrvkwo' && formspreeId !== 'YOUR_FORMSPREE_ID';
 
     try {
-      let response;
+      // 1. Try Netlify Serverless Function (supports Brevo API & Nodemailer)
+      const functionResponse = await fetch('/api/send-email', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      });
+
+      if (functionResponse.ok) {
+        setSubmittedData(data);
+        setFormStatus('success');
+        reset();
+        return;
+      }
+
+      // If serverless returned an error or is unconfigured
+      const errorJson = await functionResponse.json().catch(() => ({}));
+
+      // 2. Try Formspree if a real ID is provided
+      const formspreeId = import.meta.env.VITE_FORMSPREE_ID || contact?.formspreeId || '';
+      const hasFormspree = formspreeId && formspreeId !== 'xblrvkwo' && formspreeId !== 'YOUR_FORMSPREE_ID';
+
       if (hasFormspree) {
-        response = await fetch(`https://formspree.io/f/${formspreeId}`, {
+        const formspreeRes = await fetch(`https://formspree.io/f/${formspreeId}`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -49,27 +67,21 @@ export default function ContactSection({ personal, contact }) {
             _subject: `New Portfolio Message from ${data.name} via kunal.dev`
           })
         });
-      } else {
-        // Native Netlify Forms fallback when deployed on Netlify
-        response = await fetch('/', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-          body: encodeFormData({ 'form-name': 'contact', ...data })
-        });
+
+        if (formspreeRes.ok) {
+          setSubmittedData(data);
+          setFormStatus('success');
+          reset();
+          return;
+        }
       }
 
-      if (response && response.ok) {
-        setSubmittedData(data);
-        setFormStatus('success');
-        reset();
-      } else {
-        const errorData = await response.json().catch(() => ({}));
-        const msg = errorData?.errors?.map(e => e.message).join(', ') || 
-          'Automated delivery is temporarily unavailable. Click below to email Kunal directly.';
-        setSubmittedData(data);
-        setErrorMessage(msg);
-        setFormStatus('error');
-      }
+      // 3. Fallback error state with immediate one-click mailto
+      setSubmittedData(data);
+      setErrorMessage(
+        errorJson.error || 'Email service credentials not yet set in Netlify. Click below to email Kunal directly.'
+      );
+      setFormStatus('error');
     } catch (err) {
       setSubmittedData(data);
       setErrorMessage(err.message || 'Network error. Click below to send your message directly via email.');
@@ -293,7 +305,7 @@ export default function ContactSection({ personal, contact }) {
                 {isSubmitting ? (
                   <>
                     <Loader2 className="w-4 h-4 animate-spin" />
-                    <span>Routing to Formspree...</span>
+                    <span>Dispatching message...</span>
                   </>
                 ) : (
                   <>
@@ -305,7 +317,7 @@ export default function ContactSection({ personal, contact }) {
 
               <div className="flex items-center justify-center gap-2 pt-1 text-[11px] font-mono text-slate-500 dark:text-slate-400">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                <span>Connected via Formspree · Direct inbox delivery to Kunal</span>
+                <span>Direct delivery to singhkunal1642@gmail.com</span>
               </div>
             </form>
           )}
