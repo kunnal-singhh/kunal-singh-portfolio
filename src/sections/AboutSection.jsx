@@ -110,38 +110,44 @@ export default function AboutSection({ personal, skills, certifications }) {
             ))}
           </div>
 
-          {/* Skill Progress Bars with Gradients */}
-          <div className="space-y-6">
-            {skills.map((group) => (
-              <div key={group.category} className="space-y-3">
-                <h4 className="text-xs font-mono font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-widest flex items-center gap-2">
-                  <Sparkles className="w-3.5 h-3.5 text-cyan-500" />
-                  <span>{group.category}</span>
-                </h4>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  {group.items.map((skill) => (
-                    <div
-                      key={skill.name}
-                      className="glass-card p-3 rounded-xl space-y-2 border border-slate-200/60 dark:border-slate-800/80 hover:border-cyan-500/30 transition-colors"
-                    >
-                      <div className="flex justify-between text-xs font-medium">
-                        <span className="text-slate-800 dark:text-slate-200">{skill.name}</span>
-                        <span className="text-cyan-500 font-mono">{skill.level}%</span>
-                      </div>
-                      <div className="w-full h-1.5 bg-slate-200 dark:bg-slate-800 rounded-full overflow-hidden">
-                        <motion.div
-                          className="h-full bg-gradient-to-r from-cyan-500 via-indigo-500 to-emerald-400 rounded-full"
-                          initial={{ width: 0 }}
-                          whileInView={{ width: `${skill.level}%` }}
-                          viewport={{ once: true }}
-                          transition={{ duration: 0.6, ease: 'easeOut' }}
-                        />
-                      </div>
-                    </div>
-                  ))}
-                </div>
+          {/* Core Technical Focus Pillars */}
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <h4 className="text-xs font-mono font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-widest flex items-center gap-2">
+                <Sparkles className="w-3.5 h-3.5 text-cyan-500" />
+                <span>Core Engineering Pillars</span>
+              </h4>
+              <a
+                href="#skills"
+                className="text-xs font-mono text-cyan-500 dark:text-cyan-400 hover:underline flex items-center gap-1 font-medium"
+              >
+                <span>Full Arsenal</span>
+                <span>↓</span>
+              </a>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <div className="glass-card p-4 rounded-2xl border border-slate-200/60 dark:border-slate-800/80 hover:border-cyan-500/40 transition-all">
+                <div className="text-cyan-400 font-display font-bold text-sm mb-1">Full-Stack Core</div>
+                <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                  Interactive React 18 interfaces backed by high-concurrency Node.js &amp; Express microservices.
+                </p>
               </div>
-            ))}
+
+              <div className="glass-card p-4 rounded-2xl border border-slate-200/60 dark:border-slate-800/80 hover:border-indigo-500/40 transition-all">
+                <div className="text-indigo-400 font-display font-bold text-sm mb-1">AI &amp; LLM Pipelines</div>
+                <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                  Groq &amp; Gemini integration, prompt engineering, streaming responses, and fallbacks.
+                </p>
+              </div>
+
+              <div className="glass-card p-4 rounded-2xl border border-slate-200/60 dark:border-slate-800/80 hover:border-emerald-500/40 transition-all">
+                <div className="text-emerald-400 font-display font-bold text-sm mb-1">Cloud &amp; DevOps</div>
+                <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                  Docker containerization, Nginx reverse proxying, rate-limiting, and Git CI/CD.
+                </p>
+              </div>
+            </div>
           </div>
 
           {/* Certifications & Badges */}

@@ -5,6 +5,7 @@ import { useScrollSpy } from '../hooks/useScrollSpy';
 
 const navItems = [
   { label: 'About', href: '#about' },
+  { label: 'Skills', href: '#skills' },
   { label: 'Projects', href: '#projects' },
   { label: 'Experience', href: '#experience' },
   { label: 'Testimonials', href: '#testimonials' },
@@ -13,7 +14,7 @@ const navItems = [
 
 export default function Navbar({ isDark, toggleTheme }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const activeSection = useScrollSpy(['about', 'projects', 'experience', 'testimonials', 'contact']);
+  const activeSection = useScrollSpy(['about', 'skills', 'projects', 'experience', 'testimonials', 'contact']);
 
   return (
     <header className="fixed top-0 left-0 right-0 z-40 px-4 sm:px-8 py-4">

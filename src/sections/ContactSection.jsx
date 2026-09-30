@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useForm } from 'react-hook-form';
-import { Mail, Copy, Check, Send, Github, Linkedin, Code } from 'lucide-react';
+import { Mail, Copy, Check, Send, Github, Linkedin, Code, AlertCircle, Loader2, ArrowRight } from 'lucide-react';
 
 export default function ContactSection({ personal }) {
   const [copied, setCopied] = useState(false);
-  const [submitted, setSubmitted] = useState(false);
+  const [formStatus, setFormStatus] = useState('idle'); // 'idle' | 'success' | 'error'
+  const [errorMessage, setErrorMessage] = useState('');
+  const [submittedData, setSubmittedData] = useState(null);
 
   const {
     register,
@@ -21,11 +23,41 @@ export default function ContactSection({ personal }) {
   };
 
   const onSubmit = async (data) => {
-    // Simulate API request delay
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-    setSubmitted(true);
-    reset();
-    setTimeout(() => setSubmitted(false), 5000);
+    setErrorMessage('');
+    const formspreeId = import.meta.env.VITE_FORMSPREE_ID || 'xblrvkwo';
+    
+    try {
+      const response = await fetch(`https://formspree.io/f/${formspreeId}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify({
+          name: data.name,
+          email: data.email,
+          message: data.message,
+          _subject: `New Portfolio Message from ${data.name} via kunal.dev`
+        })
+      });
+
+      if (response.ok) {
+        setSubmittedData(data);
+        setFormStatus('success');
+        reset();
+      } else {
+        const errorData = await response.json().catch(() => ({}));
+        const msg = errorData?.errors?.map(e => e.message).join(', ') || 
+          'Form service temporarily unavailable. Please email directly.';
+        setSubmittedData(data);
+        setErrorMessage(msg);
+        setFormStatus('error');
+      }
+    } catch (err) {
+      setSubmittedData(data);
+      setErrorMessage(err.message || 'Network error. Please try sending via direct email.');
+      setFormStatus('error');
+    }
   };
 
   return (
@@ -126,18 +158,51 @@ export default function ContactSection({ personal }) {
           transition={{ duration: 0.35, ease: 'easeOut' }}
           className="lg:col-span-7 glass-card p-8 rounded-3xl"
         >
-          {submitted ? (
-            <div className="h-full min-h-[300px] flex flex-col items-center justify-center text-center space-y-4">
-              <div className="w-16 h-16 rounded-full bg-emerald-500/20 text-emerald-500 flex items-center justify-center">
+          {formStatus === 'success' ? (
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="h-full min-h-[340px] flex flex-col items-center justify-center text-center space-y-4 py-8"
+            >
+              <div className="w-16 h-16 rounded-2xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center border border-emerald-500/30 shadow-lg shadow-emerald-500/10">
                 <Check className="w-8 h-8" />
               </div>
-              <h3 className="text-2xl font-display font-bold">Message Sent!</h3>
-              <p className="text-slate-600 dark:text-slate-400 text-sm max-w-md">
-                Thank you for reaching out. I&apos;ve received your message and will get back to you shortly.
+              <h3 className="text-2xl font-display font-bold text-slate-800 dark:text-slate-100">
+                Message Dispatched!
+              </h3>
+              <p className="text-slate-600 dark:text-slate-400 text-sm max-w-md leading-relaxed">
+                Thank you for reaching out, <span className="font-semibold text-cyan-400">{submittedData?.name}</span>. Your message has been delivered to Kunal&apos;s inbox. I typically reply within 24 hours.
               </p>
-            </div>
+              <button
+                onClick={() => setFormStatus('idle')}
+                className="mt-4 px-6 py-2.5 rounded-xl bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 text-xs font-mono text-slate-800 dark:text-slate-200 transition-colors"
+              >
+                ← Send Another Message
+              </button>
+            </motion.div>
           ) : (
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+              {formStatus === 'error' && (
+                <div className="p-4 rounded-2xl bg-rose-500/10 border border-rose-500/20 text-rose-400 text-xs space-y-2">
+                  <div className="flex items-center gap-2 font-semibold">
+                    <AlertCircle className="w-4 h-4 shrink-0" />
+                    <span>Unable to send through the automated endpoint</span>
+                  </div>
+                  <p className="text-slate-300">
+                    {errorMessage || 'Form service temporarily unavailable.'} You can email Kunal directly:
+                  </p>
+                  <a
+                    href={`mailto:${personal.email}?subject=Portfolio%20Inquiry%20from%20${encodeURIComponent(
+                      submittedData?.name || ''
+                    )}&body=${encodeURIComponent(submittedData?.message || '')}`}
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 font-mono text-[11px] transition-colors"
+                  >
+                    <span>Send directly via Email Client</span>
+                    <ArrowRight className="w-3.5 h-3.5" />
+                  </a>
+                </div>
+              )}
+
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 <div>
                   <label className="block text-xs font-mono uppercase text-slate-500 dark:text-slate-400 mb-2">
@@ -147,7 +212,8 @@ export default function ContactSection({ personal }) {
                     {...register("name", { required: "Name is required" })}
                     type="text"
                     placeholder="John Doe"
-                    className="w-full px-4 py-3 rounded-xl bg-slate-100 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 focus:outline-none focus:border-cyan-500 text-sm transition-colors"
+                    disabled={isSubmitting}
+                    className="w-full px-4 py-3 rounded-xl bg-slate-100 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 focus:outline-none focus:border-cyan-500 text-sm transition-colors disabled:opacity-60"
                   />
                   {errors.name && (
                     <p className="text-xs text-rose-500 mt-1">{errors.name.message}</p>
@@ -168,7 +234,8 @@ export default function ContactSection({ personal }) {
                     })}
                     type="email"
                     placeholder="john@example.com"
-                    className="w-full px-4 py-3 rounded-xl bg-slate-100 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 focus:outline-none focus:border-cyan-500 text-sm transition-colors"
+                    disabled={isSubmitting}
+                    className="w-full px-4 py-3 rounded-xl bg-slate-100 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 focus:outline-none focus:border-cyan-500 text-sm transition-colors disabled:opacity-60"
                   />
                   {errors.email && (
                     <p className="text-xs text-rose-500 mt-1">{errors.email.message}</p>
@@ -183,8 +250,9 @@ export default function ContactSection({ personal }) {
                 <textarea
                   {...register("message", { required: "Message is required" })}
                   rows={4}
-                  placeholder="Tell me about your project or opportunity..."
-                  className="w-full px-4 py-3 rounded-xl bg-slate-100 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 focus:outline-none focus:border-cyan-500 text-sm transition-colors resize-none"
+                  placeholder="Tell me about your project, role, or opportunity..."
+                  disabled={isSubmitting}
+                  className="w-full px-4 py-3 rounded-xl bg-slate-100 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 focus:outline-none focus:border-cyan-500 text-sm transition-colors resize-none disabled:opacity-60"
                 />
                 {errors.message && (
                   <p className="text-xs text-rose-500 mt-1">{errors.message.message}</p>
@@ -197,7 +265,10 @@ export default function ContactSection({ personal }) {
                 className="w-full py-4 rounded-xl bg-cyan-500 hover:bg-cyan-600 text-white font-medium shadow-lg shadow-cyan-500/25 flex items-center justify-center space-x-2 transition-all active:scale-[0.99] disabled:opacity-50"
               >
                 {isSubmitting ? (
-                  <span>Sending...</span>
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    <span>Routing to Formspree...</span>
+                  </>
                 ) : (
                   <>
                     <span>Send Message</span>
@@ -205,6 +276,11 @@ export default function ContactSection({ personal }) {
                   </>
                 )}
               </button>
+
+              <div className="flex items-center justify-center gap-2 pt-1 text-[11px] font-mono text-slate-500 dark:text-slate-400">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                <span>Connected via Formspree · Direct inbox delivery to Kunal</span>
+              </div>
             </form>
           )}
         </motion.div>

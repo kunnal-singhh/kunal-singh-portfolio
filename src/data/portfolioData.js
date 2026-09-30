@@ -57,6 +57,160 @@ export const portfolioData = {
     }
   ],
 
+  skillsGrid: [
+    {
+      name: "React.js",
+      category: "Frontend",
+      icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg",
+      level: "Advanced",
+      color: "#06B6D4"
+    },
+    {
+      name: "JavaScript",
+      category: "Frontend",
+      icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/javascript/javascript-original.svg",
+      level: "Advanced",
+      color: "#F7DF1E"
+    },
+    {
+      name: "TypeScript",
+      category: "Frontend",
+      icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/typescript/typescript-original.svg",
+      level: "Proficient",
+      color: "#3178C6"
+    },
+    {
+      name: "Tailwind CSS",
+      category: "Frontend",
+      icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/tailwindcss/tailwindcss-original.svg",
+      level: "Expert",
+      color: "#38BDF8"
+    },
+    {
+      name: "HTML5",
+      category: "Frontend",
+      icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/html5/html5-original.svg",
+      level: "Expert",
+      color: "#E34F26"
+    },
+    {
+      name: "CSS3",
+      category: "Frontend",
+      icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/css3/css3-original.svg",
+      level: "Expert",
+      color: "#1572B6"
+    },
+    {
+      name: "Redux",
+      category: "Frontend",
+      icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/redux/redux-original.svg",
+      level: "Proficient",
+      color: "#764ABC"
+    },
+    {
+      name: "Vite",
+      category: "Frontend",
+      icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/vitejs/vitejs-original.svg",
+      level: "Advanced",
+      color: "#646CFF"
+    },
+    {
+      name: "Bootstrap",
+      category: "Frontend",
+      icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/bootstrap/bootstrap-original.svg",
+      level: "Proficient",
+      color: "#7952B3"
+    },
+    {
+      name: "Node.js",
+      category: "Backend",
+      icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nodejs/nodejs-original.svg",
+      level: "Advanced",
+      color: "#339933"
+    },
+    {
+      name: "Express.js",
+      category: "Backend",
+      icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/express/express-original.svg",
+      level: "Advanced",
+      color: "#94A3B8"
+    },
+    {
+      name: "Python",
+      category: "Backend",
+      icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg",
+      level: "Proficient",
+      color: "#3776AB"
+    },
+    {
+      name: "C++",
+      category: "Backend",
+      icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/cplusplus/cplusplus-original.svg",
+      level: "Proficient",
+      color: "#00599C"
+    },
+    {
+      name: "MongoDB",
+      category: "AI & Databases",
+      icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/mongodb/mongodb-original.svg",
+      level: "Advanced",
+      color: "#47A248"
+    },
+    {
+      name: "Gemini & Groq AI",
+      category: "AI & Databases",
+      icon: "custom:gemini",
+      level: "Advanced",
+      color: "#8B5CF6"
+    },
+    {
+      name: "Docker",
+      category: "DevOps & Cloud",
+      icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/docker/docker-original.svg",
+      level: "Proficient",
+      color: "#2496ED"
+    },
+    {
+      name: "Git",
+      category: "DevOps & Cloud",
+      icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/git/git-original.svg",
+      level: "Advanced",
+      color: "#F05032"
+    },
+    {
+      name: "GitHub",
+      category: "DevOps & Cloud",
+      icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/github/github-original.svg",
+      level: "Advanced",
+      color: "#CBD5E1"
+    },
+    {
+      name: "Nginx",
+      category: "DevOps & Cloud",
+      icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nginx/nginx-original.svg",
+      level: "Proficient",
+      color: "#009639"
+    },
+    {
+      name: "Linux",
+      category: "DevOps & Cloud",
+      icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/linux/linux-original.svg",
+      level: "Proficient",
+      color: "#FCC624"
+    },
+    {
+      name: "Postman",
+      category: "DevOps & Cloud",
+      icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/postman/postman-original.svg",
+      level: "Expert",
+      color: "#FF6C37"
+    }
+  ],
+
+  contact: {
+    formspreeId: "xblrvkwo" // Set VITE_FORMSPREE_ID in .env or configure here
+  },
+
   projects: [
     {
       id: "intervue",
