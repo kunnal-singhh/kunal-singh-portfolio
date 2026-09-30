@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { useForm } from 'react-hook-form';
 import { Mail, Copy, Check, Send, Github, Linkedin, Code, AlertCircle, Loader2, ArrowRight } from 'lucide-react';
 
-export default function ContactSection({ personal }) {
+export default function ContactSection({ personal, contact }) {
   const [copied, setCopied] = useState(false);
   const [formStatus, setFormStatus] = useState('idle'); // 'idle' | 'success' | 'error'
   const [errorMessage, setErrorMessage] = useState('');
@@ -24,7 +24,17 @@ export default function ContactSection({ personal }) {
 
   const onSubmit = async (data) => {
     setErrorMessage('');
-    const formspreeId = import.meta.env.VITE_FORMSPREE_ID || 'xblrvkwo';
+    const formspreeId = import.meta.env.VITE_FORMSPREE_ID || contact?.formspreeId || '';
+
+    // Check if ID is missing or placeholder
+    if (!formspreeId || formspreeId === 'xblrvkwo' || formspreeId === 'YOUR_FORMSPREE_ID') {
+      setSubmittedData(data);
+      setErrorMessage(
+        'Your Formspree Form ID is not yet connected. Create a free form at formspree.io and add your 8-character ID in portfolioData.js or VITE_FORMSPREE_ID.'
+      );
+      setFormStatus('error');
+      return;
+    }
     
     try {
       const response = await fetch(`https://formspree.io/f/${formspreeId}`, {

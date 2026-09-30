@@ -55,7 +55,7 @@ export default function App() {
           />
           <ExperienceSection experience={portfolioData.experience} />
           <TestimonialsSection testimonials={portfolioData.testimonials} />
-          <ContactSection personal={portfolioData.personal} />
+          <ContactSection personal={portfolioData.personal} contact={portfolioData.contact} />
         </main>
 
         <Footer personal={portfolioData.personal} />
