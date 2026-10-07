@@ -22,71 +22,44 @@ export default function ContactSection({ personal, contact }) {
     setTimeout(() => setCopied(false), 2000);
   };
 
-  const encodeFormData = (data) => {
-    return Object.keys(data)
-      .map((key) => encodeURIComponent(key) + '=' + encodeURIComponent(data[key]))
-      .join('&');
-  };
-
   const onSubmit = async (data) => {
     setErrorMessage('');
 
     try {
-      // 1. Try Netlify Serverless Function (supports Brevo API & Nodemailer)
-      const functionResponse = await fetch('/api/send-email', {
+      const formspreeId = import.meta.env.VITE_FORMSPREE_ID || contact?.formspreeId;
+      if (!formspreeId || formspreeId === 'YOUR_FORMSPREE_ID') {
+        throw new Error('The contact form is not configured yet. Please email Kunal directly using the link below.');
+      }
+
+      const response = await fetch(`https://formspree.io/f/${formspreeId}`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data)
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json'
+        },
+        body: JSON.stringify({
+          name: data.name,
+          email: data.email,
+          message: data.message,
+          subject: `Portfolio contact from ${data.name}`
+        })
       });
 
-      if (functionResponse.ok) {
+      const result = await response.json().catch(() => ({}));
+      if (!response.ok) {
+        const providerError = result.errors?.map((error) => error.message).filter(Boolean).join(' ');
+        throw new Error(providerError || result.error || 'Formspree could not accept your message. Please email Kunal directly using the link below.');
+      }
+
+      if (result.ok === true || response.ok) {
         setSubmittedData(data);
         setFormStatus('success');
         reset();
         return;
       }
-
-      // If serverless returned an error or is unconfigured
-      const errorJson = await functionResponse.json().catch(() => ({}));
-
-      // 2. Try Formspree if a real ID is provided
-      const formspreeId = import.meta.env.VITE_FORMSPREE_ID || contact?.formspreeId || '';
-      const hasFormspree = formspreeId && formspreeId !== 'xblrvkwo' && formspreeId !== 'YOUR_FORMSPREE_ID';
-
-      if (hasFormspree) {
-        const formspreeRes = await fetch(`https://formspree.io/f/${formspreeId}`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json'
-          },
-          body: JSON.stringify({
-            name: data.name,
-            email: data.email,
-            message: data.message,
-            _subject: `New Portfolio Message from ${data.name} via kunal.dev`
-          })
-        });
-
-        if (formspreeRes.ok) {
-          setSubmittedData(data);
-          setFormStatus('success');
-          reset();
-          return;
-        }
-      }
-
-      // 3. Fallback error state with immediate one-click mailto
-      setSubmittedData(data);
-      setErrorMessage(
-        errorJson.message ||
-        errorJson.error ||
-        'Email service credentials not yet set in Netlify. Click below to email Kunal directly.'
-      );
-      setFormStatus('error');
     } catch (err) {
       setSubmittedData(data);
-      setErrorMessage(err.message || 'Network error. Click below to send your message directly via email.');
+      setErrorMessage(err.message || 'Network error. Please email Kunal directly using the link below.');
       setFormStatus('error');
     }
   };
@@ -202,7 +175,7 @@ export default function ContactSection({ personal, contact }) {
                 Message Dispatched!
               </h3>
               <p className="text-slate-600 dark:text-slate-400 text-sm max-w-md leading-relaxed">
-                Thank you for reaching out, <span className="font-semibold text-cyan-400">{submittedData?.name}</span>. Your message has been delivered to Kunal&apos;s inbox. I typically reply within 24 hours.
+                Thank you for reaching out, <span className="font-semibold text-cyan-400">{submittedData?.name}</span>. Your message was accepted by the email service. I typically reply within 24 hours.
               </p>
               <button
                 onClick={() => setFormStatus('idle')}
@@ -215,13 +188,9 @@ export default function ContactSection({ personal, contact }) {
             <form
               name="contact"
               method="POST"
-              data-netlify="true"
-              data-netlify-honeypot="bot-field"
               onSubmit={handleSubmit(onSubmit)}
               className="space-y-6"
             >
-              <input type="hidden" name="form-name" value="contact" />
-              <input type="hidden" name="bot-field" />
               {formStatus === 'error' && (
                 <div className="p-4 rounded-2xl bg-rose-500/10 border border-rose-500/20 text-rose-400 text-xs space-y-2">
                   <div className="flex items-center gap-2 font-semibold">

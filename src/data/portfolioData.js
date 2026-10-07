@@ -208,7 +208,7 @@ export const portfolioData = {
   ],
 
   contact: {
-    formspreeId: "xblrvkwo" // Set VITE_FORMSPREE_ID in .env or configure here
+    formspreeId: "mzededoq" // Override with VITE_FORMSPREE_ID when deploying
   },
 
   projects: [
